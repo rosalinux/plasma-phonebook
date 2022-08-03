@@ -4,27 +4,28 @@
  * SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
  */
 
+import QtGraphicalEffects 1.0
 import QtQuick 2.6
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.4 as Kirigami
-import QtGraphicalEffects 1.0
-
 
 Rectangle {
     id: root
-    clip: true
+
     default property alias contents: content.data
     property alias content: contentContainer
     property alias stripContent: strip.data
-
     property var source
     property var backgroundSource
 
+    clip: true
+
     // Background image
     Image {
-        anchors.fill: parent
         id: bg
+
+        anchors.fill: parent
         source: root.backgroundSource
     }
 
@@ -38,8 +39,8 @@ Rectangle {
             source: parent
             color: "#66808080"
         }
-    }
 
+    }
 
     // Container for the content of the header
     Item {
@@ -48,32 +49,40 @@ Rectangle {
 
         Item {
             id: contentContainer
+
             anchors.fill: parent
             anchors.margins: Kirigami.Units.gridUnit
             anchors.leftMargin: 200
 
             Kirigami.Icon {
                 id: img
+
                 source: root.source
                 height: contentContainer.height
                 width: contentContainer.height
             }
+
             Item {
                 id: content
+
                 height: childrenRect.height
                 anchors.left: img.right
                 anchors.leftMargin: Kirigami.Units.gridUnit
                 anchors.bottom: img.bottom
             }
+
         }
+
     }
 
     Rectangle {
         id: strip
+
         color: "#66F0F0F0"
-        anchors.bottom: parent.bottom;
+        anchors.bottom: parent.bottom
         height: 2 * Kirigami.Units.gridUnit
         width: parent.width
         visible: children.length > 0
     }
+
 }

@@ -6,34 +6,35 @@
  */
 
 import QtQuick 2.1
-import org.kde.kirigami 2.4 as Kirigami
 import QtQuick.Controls 2.0 as Controls
-
+import org.kde.kirigami 2.4 as Kirigami
 import org.kde.phonebook 1.0
 
 Kirigami.ApplicationWindow {
     id: root
 
-    title: i18n("Phonebook")
-
+    pageStack.globalToolBar.preferredHeight: 0
     width: Kirigami.Units.gridUnit * 65
     minimumWidth: Kirigami.Units.gridUnit * 15
-    minimumHeight: Kirigami.Units.gridUnit * 20
     onClosing: ContactController.saveWindowGeometry(root)
-    Component.onCompleted: if (!Kirigami.Settings.isMobile && ContactController.lastPersonUri) {
-        pageStack.push("qrc:/DetailPage.qml", {
-            personUri: ContactController.lastPersonUri
-        });
+    Component.onCompleted: {
     }
 
-    pageStack.initialPage: ContactsPage {}
-    pageStack.globalToolBar.canContainHandles: true
+    FontLoader {
+        id: webFontM
 
-    contextDrawer: Kirigami.ContextDrawer {
-        id: contextDrawer
+        source: "qrc:/font-manrope-medium"
     }
 
     ContactImporter {
         id: importer
     }
+
+    pageStack.initialPage: ContactsPage {
+    }
+
+    contextDrawer: Kirigami.ContextDrawer {
+        id: contextDrawer
+    }
+
 }

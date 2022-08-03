@@ -9,6 +9,31 @@
         <file alias="AddContactPage.qml">contents/ui/AddContactPage.qml</file>
         <file alias="PhoneNumberDialog.qml">contents/ui/PhoneNumberDialog.qml</file>
         <file alias="fallbackBackground.png">contents/resources/fallbackBackground.png</file>
+
+        <file alias="btn-contact-plus.png">contents/resources/btn-contact-plus.png</file>
+        <file alias="btn-contact-plusgr.png">contents/resources/btn-contact-plusgr.png</file>
+        <file alias="icon-person.png">contents/resources/icon-person.png</file>
+        <file alias="icon-handset-call.png">contents/resources/icon-handset-call.png</file>
+        <file alias="icon-mail.png">contents/resources/icon-mail.png</file>
+        <file alias="icon-hb.png">contents/resources/icon-hb.png</file>
+        <file alias="btn-save.png">contents/resources/btn-save.png</file>
+        <file alias="btn-saveok.png">contents/resources/btn-saveok.png</file>
+        <file alias="icon-plus.png">contents/resources/icon-plus.png</file>
+        <file alias="icon-arrow.png">contents/resources/icon-arrow.png</file>
+        <file alias="icon-cross.png">contents/resources/icon-cross.png</file>
+        <file alias="btn-contrecent.png">contents/resources/btn-contrecent.png</file>
+        <file alias="btn-contgr.png">contents/resources/btn-contgr.png</file>
+        <file alias="edit.png">contents/resources/edit.png</file>
+        <file alias="btn-call.png">contents/resources/btn-call.png</file>
+        <file alias="btn-callgr.png">contents/resources/btn-callgr.png</file>
+        <file alias="icon-search.png">contents/resources/icon-search.png</file>
+        <file alias="icon-dots.png">contents/resources/icon-dots.png</file>
+
+        <file alias="font-manrope">contents/resources/Manrope-Regular.ttf</file>
+        <file alias="font-manrope-medium">contents/resources/Manrope-Medium.ttf</file>
+
         <file>qtquickcontrols2.conf</file>
+
+        <file alias="Utils.js">contents/js/Utils.js</file>
     </qresource>
 </RCC>

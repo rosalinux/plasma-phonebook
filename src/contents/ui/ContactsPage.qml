@@ -9,86 +9,265 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.0 as Controls
 import QtQuick.Layouts 1.7
-
+import "Utils.js" as Utils
 import org.kde.kirigami 2.12 as Kirigami
 import org.kde.people 1.0 as KPeople
-
 import org.kde.phonebook 1.0
 
-
 Kirigami.ScrollablePage {
-    title: i18n("Phonebook")
+    id: page
 
-    actions.main: Kirigami.Action {
-        icon.name: "contact-new-symbolic"
-        text: i18n("Create New")
-        onTriggered: {
-            pageStack.pushDialogLayer(Qt.resolvedUrl("AddContactPage.qml"), {state: "create"})
-        }
+    function calculateHeight() {
+        return footerRectangle.y - (allLabel.y + allLabel.height + 2 * contactsList.spacing);
     }
 
-    actions.contextualActions: [
-        Kirigami.Action {
-            icon.name: "document-import"
-            text: i18n("Import contacts")
-            onTriggered: {
-                importer.startImport()
+    width: 720
+    height: 1600
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: 0
+
+    Rectangle {
+        color: "#C4C4C4"
+
+        Rectangle {
+            id: searchArea
+
+            x: 50
+            y: 129
+            radius: 10
+            width: 620
+            height: 96
+            color: "#CFCFCF"
+
+            Rectangle {
+                id: searchIcon
+
+                signal clicked()
+
+                x: 22
+                y: 25
+                opacity: mouseArea.pressed ? 0.2 : 1
+                onClicked: {
+                    filterModel.setFilterFixedString(searchField.text);
+                }
+
+                Kirigami.Icon {
+                    width: 46
+                    height: 46
+                    source: "qrc:/icon-search.png"
+
+                    MouseArea {
+                        id: mouseArea
+
+                        anchors.fill: parent
+                        onClicked: {
+                            searchIcon.clicked();
+                        }
+                    }
+
+                }
+
             }
-        }
-    ]
 
-    header: Controls.Control {
-        padding: Kirigami.Units.largeSpacing
+            Controls.TextField {
+                id: searchField
 
-        contentItem: Kirigami.SearchField {
-            id: searchField
-            onTextChanged: filterModel.setFilterFixedString(text)
+                onTextChanged: filterModel.setFilterFixedString(text)
+                color: "#444444"
+                placeholderText: i18n("Поиск контактов")
+                text: ""
+                font.family: "Manrope"
+                font.pixelSize: 26
+                x: 144
+                y: 25
+                width: 340
+                onAccepted: {
+                    addressee.formattedName = text;
+                }
+
+                Connections {
+                    function onSave() {
+                        name.accepted();
+                    }
+
+                    target: root
+                }
+
+                background: Rectangle {
+                    color: "#CFCFCF"
+                }
+
+            }
+
+            Rectangle {
+                x: 555
+                y: 25
+
+                Kirigami.Icon {
+                    width: 46
+                    height: 46
+                    source: "qrc:/icon-dots.png"
+                }
+
+            }
+
         }
+
+        Rectangle {
+            id: allLabel
+
+            width: 183
+            height: 28
+            color: "#EAE9E9"
+            anchors.top: searchArea.bottom
+            anchors.left: searchArea.left
+            anchors.topMargin: 5
+
+            Controls.Label {
+                color: "#444444"
+                horizontalAlignment: Qt.AlignHCenter
+                verticalAlignment: Qt.AlignVCenter
+                font.family: "Manrope"
+                font.pixelSize: 20
+                text: {
+                    i18n("Всего ") + contactsList.count + i18n(" контакт") + Utils.getSuffix(contactsList.count);
+                }
+            }
+
+        }
+
+        ListView {
+            id: contactsList
+
+            property bool delegateSelected: false
+            property string numberToCall
+
+            parent: footerRectangle
+            anchors.topMargin: 25
+            anchors.bottom: parent.top
+            x: 0
+            spacing: 20
+            width: 720
+            height: calculateHeight()
+            reuseItems: true
+            currentIndex: -1
+            clip: true
+
+            Kirigami.PlaceholderMessage {
+                anchors.centerIn: parent
+                text: i18n("Нет данных")
+                visible: contactsList.count === 0
+            }
+
+            model: KPeople.PersonsSortFilterProxyModel {
+                id: filterModel
+
+                filterRole: Qt.DisplayRole
+                sortRole: Qt.DisplayRole
+                filterCaseSensitivity: Qt.CaseInsensitive
+                Component.onCompleted: {
+                    pageStack.globalToolBar.preferredHeight = 0;
+                    sort(0);
+                }
+
+                sourceModel: KPeople.PersonsModel {
+                    id: contactsModel
+                }
+
+            }
+
+            delegate: ContactListItem {
+                x: 50
+                height: 132
+                width: 620
+                name: model && model.display
+                phone: model && model.phoneNumber
+                avatarIcon: model && model.decoration
+                padding: 10
+                onClicked: {
+                    pageStack.push("qrc:/DetailPage.qml", {
+                        "personUri": model.personUri
+                    });
+                    ContactController.lastPersonUri = model.personUri;
+                }
+
+                background: Rectangle {
+                    width: parent.width
+                    height: parent.height
+                    radius: 10
+                    implicitWidth: page.width
+                    implicitHeight: 40
+                }
+
+            }
+
+        }
+
+        Rectangle {
+            parent: footerRectangle
+            anchors.bottom: parent.top
+            anchors.bottomMargin: 198
+            anchors.left: parent.left
+            anchors.leftMargin: 499
+            z: 1
+
+            Kirigami.Icon {
+                width: 187
+                height: 164
+                source: mouseAreaAddBtn.pressed ? "qrc:/btn-contact-plusgr.png" : "qrc:/btn-contact-plus.png"
+
+                MouseArea {
+                    id: mouseAreaAddBtn
+
+                    anchors.fill: parent
+                    onClicked: {
+                        pageStack.pushDialogLayer(Qt.resolvedUrl("AddContactPage.qml"), {
+                            "state": "create"
+                        });
+                    }
+                }
+
+            }
+
+        }
+
     }
 
-    ListView {
-        id: contactsList
+    footer: Rectangle {
+        id: footerRectangle
 
-        property bool delegateSelected: false
-        property string numberToCall
+        x: 0
+        width: 720
+        height: 187
+        color: "#437431"
 
-        reuseItems: true
+        Rectangle {
+            x: 70
+            y: 21
 
-        currentIndex: -1
-
-        section.property: "display"
-        section.criteria: ViewSection.FirstCharacter
-        section.delegate: Kirigami.ListSectionHeader {text: section}
-        clip: true
-        model: KPeople.PersonsSortFilterProxyModel {
-            id: filterModel
-            filterRole: Qt.DisplayRole
-            sortRole: Qt.DisplayRole
-            filterCaseSensitivity: Qt.CaseInsensitive
-
-            sourceModel: KPeople.PersonsModel {
-                id: contactsModel
+            Kirigami.Icon {
+                width: 220
+                height: 150
+                source: "qrc:/btn-contrecent.png"
+                color: "white"
             }
-            Component.onCompleted: sort(0)
+
         }
 
-        Kirigami.PlaceholderMessage {
-            anchors.centerIn: parent
-            text: i18n("No contacts")
-            visible: contactsList.count === 0
-        }
+        Rectangle {
+            x: 431
+            y: 21
 
-        delegate: ContactListItem {
-            height: Kirigami.Units.gridUnit * 3
-            name: model && model.display
-            avatarIcon: model && model.decoration
-
-            onClicked: {
-                pageStack.push("qrc:/DetailPage.qml", {
-                    personUri: model.personUri
-                })
-                ContactController.lastPersonUri = model.personUri;
+            Kirigami.Icon {
+                width: 220
+                height: 150
+                source: "qrc:/btn-contgr.png"
+                color: "white"
             }
+
         }
+
     }
+
 }

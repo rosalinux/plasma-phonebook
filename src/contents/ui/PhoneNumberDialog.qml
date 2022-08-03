@@ -10,7 +10,6 @@ import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.10 as Kirigami
 
 Kirigami.OverlaySheet {
-
     id: root
 
     property alias numbers: list.model
@@ -18,21 +17,25 @@ Kirigami.OverlaySheet {
 
     signal numberSelected(string number)
 
-    header: Kirigami.Heading {
-        id: heading
-    }
-
     ListView {
         id: list
+
         implicitWidth: Kirigami.Units.gridUnit * 20
         model: 4
+
         delegate: Kirigami.BasicListItem {
             text: modelData.typeLabel
             subtitle: modelData.number
             onClicked: {
-                close()
-                root.numberSelected(modelData.normalizedNumber)
+                close();
+                root.numberSelected(modelData.normalizedNumber);
             }
         }
+
     }
+
+    header: Kirigami.Heading {
+        id: heading
+    }
+
 }
